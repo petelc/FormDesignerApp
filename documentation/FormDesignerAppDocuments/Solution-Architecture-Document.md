@@ -4,19 +4,29 @@
 
 This document outlines the architecture for a modern, enterprise-grade React application that interfaces with the FormDesignerAPI backend. The application will be built using TypeScript, React 18+, Redux Toolkit for state management, and React Bootstrap for UI components, with comprehensive JWT-based authentication and role-based access control.
 
+**Core Innovation**: This application leverages AI-powered document intelligence and automated code generation to transform PDF forms into fully functional React components with backend code, significantly accelerating form development workflows.
+
 ---
 
 ## 2. System Overview
 
 ### 2.1 Purpose
-The Form Designer React Application provides a user-friendly interface for creating, managing, and deploying dynamic forms. It connects to the FormDesignerAPI Clean Architecture backend to handle all business logic and data persistence.
+The Form Designer React Application provides an intelligent, automated solution for form creation and deployment. Users can either upload existing PDF forms for AI-powered analysis and extraction, or build forms from scratch using a drag-and-drop interface. The application then generates production-ready React components and backend code through the FormDesignerAPI's code generation engine.
 
 ### 2.2 Key Features
+
+#### Phase 1 Priority Features (Weeks 1-8)
 - **User Authentication & Authorization**: JWT token-based authentication with role-based access control (RBAC)
-- **Form Management**: Create, edit, delete, and publish forms
-- **Form Builder**: Drag-and-drop interface for form design
-- **Form Submission**: Public-facing form filling and submission
+- **PDF Upload & Processing**: Upload PDF forms for document intelligence analysis
+- **Document Intelligence Integration**: Extract form structure, fields, and layout from PDFs using Azure Document Intelligence
+- **Code Generation**: Transform form definitions into React components and backend code using template engine
+- **Project Management**: Manage form projects, view generated code, download artifacts
 - **User Management**: Admin interface for managing users and roles
+
+#### Phase 2 Features (Weeks 9-16)
+- **Form Builder**: Drag-and-drop interface for manual form design
+- **Form Management**: Create, edit, delete, and publish forms
+- **Form Submission**: Public-facing form filling and submission
 - **Responsive Design**: Mobile-first, modern business styling
 - **Real-time Validation**: Client-side and server-side validation
 - **State Management**: Centralized Redux store with persistence
@@ -135,19 +145,44 @@ form-designer-app/
 │   │   │   ├── services/
 │   │   │   ├── slices/
 │   │   │   └── types/
-│   │   ├── forms/
+│   │   ├── projects/             # PDF projects management
+│   │   │   ├── components/
+│   │   │   ├── pages/
+│   │   │   ├── services/
+│   │   │   ├── slices/
+│   │   │   └── types/
+│   │   ├── pdf-upload/           # PDF upload & processing
+│   │   │   ├── components/
+│   │   │   ├── pages/
+│   │   │   ├── services/
+│   │   │   ├── slices/
+│   │   │   └── types/
+│   │   ├── document-intelligence/ # Document analysis results
+│   │   │   ├── components/
+│   │   │   ├── pages/
+│   │   │   ├── services/
+│   │   │   ├── slices/
+│   │   │   └── types/
+│   │   ├── code-generation/      # Code generation & templates
+│   │   │   ├── components/
+│   │   │   ├── pages/
+│   │   │   ├── services/
+│   │   │   ├── slices/
+│   │   │   └── types/
+│   │   ├── forms/                # Form builder (Phase 2)
 │   │   │   ├── components/
 │   │   │   ├── pages/
 │   │   │   ├── services/
 │   │   │   ├── slices/
 │   │   │   └── types/
 │   │   ├── users/
-│   │   └── submissions/
+│   │   └── submissions/          # (Phase 2)
 │   ├── shared/
 │   │   ├── components/
 │   │   │   ├── layout/
 │   │   │   ├── ui/
-│   │   │   └── forms/
+│   │   │   ├── forms/
+│   │   │   └── code-viewer/      # Syntax highlighted code viewer
 │   │   ├── hooks/
 │   │   ├── utils/
 │   │   ├── types/

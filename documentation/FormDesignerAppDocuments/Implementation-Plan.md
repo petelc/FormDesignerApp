@@ -27,6 +27,8 @@ This document outlines the phased implementation plan for building the Form Desi
 
 ## 3. Phase Breakdown
 
+**Note**: The implementation has been reorganized to prioritize PDF intelligence and code generation features before the manual form builder.
+
 ## Phase 0: Project Setup & Planning (Week 1)
 
 ### 3.1 Objectives
@@ -242,340 +244,393 @@ npm install -D @testing-library/react @testing-library/jest-dom
 
 ---
 
-## Phase 3: Forms Management (Weeks 6-9)
+## Phase 3: PDF Intelligence & Code Generation (Weeks 6-9)
 
 ### 6.1 Objectives
-- Build form CRUD operations
-- Implement form listing and filtering
-- Create form builder interface
+- Implement PDF upload and processing
+- Integrate Document Intelligence
+- Build structure review interface
+- Implement code generation workflow
 
-### 6.2 Sprint 3.1: Forms Infrastructure (Week 6)
+### 6.2 Sprint 3.1: Project Management & PDF Upload (Week 6)
 
 #### Tasks
-- [ ] **Forms Redux Slice**
-  - Create forms slice with initial state
-  - Implement fetchForms async thunk
-  - Implement fetchFormById async thunk
-  - Implement createForm async thunk
-  - Implement updateForm async thunk
-  - Implement deleteForm async thunk
-  - Implement publishForm async thunk
+- [ ] **Projects Redux Slice**
+  - Create projects slice with initial state
+  - Implement CRUD async thunks
+  - Handle upload progress state
+  - Implement project status management
 
-- [ ] **Forms API Services**
-  - Implement all CRUD endpoints
-  - Implement pagination
-  - Implement filtering and search
-  - Implement form duplication
-  - Implement form preview
+- [ ] **Projects API Services**
+  - Implement all project CRUD endpoints
+  - Implement file upload with progress tracking
+  - Add multipart/form-data support
+  - Implement pagination and filtering
 
-- [ ] **Forms List Page**
-  - Create forms list component
-  - Implement DataTable with pagination
+- [ ] **Projects List Page**
+  - Create projects list component
+  - Implement DataTable with status badges
   - Add search and filter functionality
-  - Add sorting by different columns
-  - Implement bulk actions
-  - Add status badges
+  - Add quick actions (upload, view, delete)
+  - Show project status indicators
+
+- [ ] **PDF Upload Component**
+  - Create drag-and-drop upload zone
+  - Implement file validation (PDF only, max 10MB)
+  - Add upload progress indicator
+  - Display PDF preview after upload
+  - Handle upload errors gracefully
+
+- [ ] **Project Detail Page**
+  - Display project information
+  - Show uploaded PDF
+  - Display current status
+  - Add navigation to next steps
 
 #### Deliverables
-- ✅ Forms state management
-- ✅ Forms API integration
-- ✅ Forms listing with pagination
+- ✅ Project management system
+- ✅ PDF upload functionality
+- ✅ Projects list with status tracking
 
-### 6.3 Sprint 3.2: Form Builder - Part 1 (Week 7)
+### 6.3 Sprint 3.2: Document Intelligence Integration (Week 7)
 
 #### Tasks
-- [ ] **Form Builder Setup**
-  - Install drag-and-drop library (@dnd-kit/core)
-  - Create FormBuilder component structure
-  - Implement 3-column layout (palette, canvas, editor)
-  - Create form state management
-  - Implement auto-save functionality
+- [ ] **Document Intelligence Redux Slice**
+  - Create document intelligence slice
+  - Implement analysis async thunks
+  - Handle polling state
+  - Manage analysis results
 
-- [ ] **Field Palette**
-  - Create FieldPalette component
-  - Add all field types
-  - Implement drag from palette
-  - Add field icons and descriptions
-  - Group fields by category
+- [ ] **Document Intelligence API Services**
+  - Implement start analysis endpoint
+  - Implement status polling endpoint
+  - Implement get results endpoint
+  - Handle long-running operations
 
-- [ ] **Form Canvas**
-  - Create FormCanvas component
-  - Implement drop zone
-  - Implement field reordering
-  - Add field selection
-  - Implement field deletion
-  - Show field preview
+- [ ] **Analysis Initiation**
+  - Create "Start Analysis" button/modal
+  - Display analysis progress
+  - Implement polling mechanism
+  - Show estimated completion time
+  - Handle analysis errors
+
+- [ ] **Custom Polling Hook**
+  - Create usePolling custom hook
+  - Implement exponential backoff
+  - Add max attempts limit
+  - Handle timeout scenarios
+
+- [ ] **Analysis Status Display**
+  - Show real-time progress updates
+  - Display progress percentage
+  - Show current analysis stage
+  - Add cancel analysis option (if supported)
 
 #### Deliverables
-- ✅ Basic form builder interface
-- ✅ Drag-and-drop functionality
-- ✅ Field palette and canvas
+- ✅ Document Intelligence integration
+- ✅ Analysis job management
+- ✅ Real-time progress tracking
 
-### 6.4 Sprint 3.3: Form Builder - Part 2 (Week 8)
+### 6.4 Sprint 3.3: Structure Review & Editing (Week 8)
 
 #### Tasks
-- [ ] **Field Editor Panel**
-  - Create FieldEditor component
-  - Implement field properties editor
-  - Add validation rules editor
-  - Implement field options editor (for select, radio, etc.)
-  - Add conditional logic editor
-  - Implement help text editor
+- [ ] **Form Structure Redux Slice**
+  - Create form structure slice
+  - Implement structure update thunks
+  - Handle conversion to form definition
+  - Track unsaved changes
 
-- [ ] **Field Types Implementation**
-  - Text input field
-  - Email field
-  - Number field
-  - Date/DateTime field
-  - Textarea field
-  - Select/Dropdown field
-  - Multi-select field
-  - Radio buttons field
-  - Checkboxes field
-  - File upload field
+- [ ] **Document Intelligence Viewer**
+  - Create split-view component (PDF + fields)
+  - Implement PDF viewer integration
+  - Highlight extracted fields on PDF
+  - Show confidence scores
+  - Add field click navigation
 
-- [ ] **Form Settings**
-  - Create FormSettings component
-  - Implement form title/description editor
-  - Add form settings panel
-  - Implement confirmation message
-  - Add redirect URL option
-  - Configure notification emails
+- [ ] **Extracted Fields Panel**
+  - Display all extracted fields
+  - Show field properties (type, label, validation)
+  - Color-code by confidence level
+  - Add accept/reject actions
+  - Show extraction metadata
+
+- [ ] **Field Editor**
+  - Edit field labels and properties
+  - Change field types
+  - Add/remove validation rules
+  - Set required/optional
+  - Add help text and placeholders
+
+- [ ] **Structure Management**
+  - Reorder fields (drag & drop)
+  - Group fields into sections
+  - Add new fields manually
+  - Delete extracted fields
+  - Undo/redo functionality
+
+- [ ] **Convert to Form Definition**
+  - Create conversion wizard
+  - Map extracted fields to form fields
+  - Apply auto-detection rules
+  - Review and confirm conversion
+  - Save form definition
 
 #### Deliverables
-- ✅ Complete field editor
-- ✅ All field types implemented
-- ✅ Form settings configuration
+- ✅ Interactive structure review interface
+- ✅ Field editing capabilities
+- ✅ Conversion to form definition
 
-### 6.5 Sprint 3.4: Form Builder - Polish (Week 9)
+### 6.5 Sprint 3.4: Code Generation (Week 9)
 
 #### Tasks
-- [ ] **Advanced Features**
-  - Implement conditional logic
-  - Add field validation rules
-  - Implement form preview mode
-  - Add undo/redo functionality
-  - Implement form templates
-  - Add form versioning
+- [ ] **Code Generation Redux Slice**
+  - Create code generation slice
+  - Implement generation async thunks
+  - Handle polling state
+  - Manage generated artifacts
 
-- [ ] **Form Publishing**
-  - Create publish confirmation modal
-  - Implement publish workflow
-  - Add form status management
-  - Create shareable form link
-  - Implement form analytics setup
+- [ ] **Code Templates API**
+  - Fetch available templates
+  - Get template details
+  - Display template previews
+  - Show template capabilities
 
-- [ ] **Testing & Bug Fixes**
-  - Unit tests for form builder
-  - Integration tests
-  - Cross-browser testing
-  - Mobile responsiveness
-  - Bug fixes and optimizations
+- [ ] **Code Generation Wizard**
+  - Step 1: Select template
+  - Step 2: Configure options (framework, styling)
+  - Step 3: Review form definition
+  - Step 4: Start generation
+  - Step 5: View results
+
+- [ ] **Generation Progress**
+  - Display generation status
+  - Show progress updates
+  - Display current file being generated
+  - Handle generation errors
+
+- [ ] **Code Viewer Component**
+  - File tree navigation
+  - Syntax-highlighted code display (react-syntax-highlighter)
+  - Copy to clipboard functionality
+  - Search within code
+  - File filtering
+
+- [ ] **Download & Export**
+  - Download individual files
+  - Download complete project as ZIP
+  - Generate download links
+  - Handle link expiration
+  - Show file sizes
+
+- [ ] **Generated Code Management**
+  - View generation history
+  - Regenerate with different options
+  - Compare different generations
+  - Delete old generations
 
 #### Deliverables
-- ✅ Advanced form builder features
-- ✅ Form publishing workflow
-- ✅ Tested and polished form builder
+- ✅ Complete code generation workflow
+- ✅ Code viewer with syntax highlighting
+- ✅ Download and export functionality
 
 ### 6.6 Timeline: 4 weeks
 
 ---
 
-## Phase 4: Form Submissions (Weeks 10-11)
+## Phase 4: Enhanced Features & Polish (Weeks 10-11)
 
 ### 7.1 Objectives
-- Implement form submission functionality
-- Create submissions management interface
-- Build submission viewing and export features
+- Add WebSocket support for real-time updates (optional)
+- Implement advanced editing features
+- Add code quality checks
+- Improve user experience
 
-### 7.2 Sprint 4.1: Public Form Submission (Week 10)
-
-#### Tasks
-- [ ] **Public Form Page**
-  - Create public form rendering component
-  - Implement form field rendering
-  - Add form validation
-  - Implement file upload handling
-  - Add CAPTCHA integration (optional)
-  - Create submission success page
-
-- [ ] **Form Submission Logic**
-  - Submissions Redux slice
-  - Submissions API services
-  - Implement form submission
-  - Handle validation errors
-  - Implement draft save functionality
-  - Add progress indicator
-
-- [ ] **Conditional Logic Rendering**
-  - Implement show/hide fields
-  - Implement required field logic
-  - Add skip logic
-  - Test all conditional scenarios
-
-#### Deliverables
-- ✅ Public form submission working
-- ✅ Form validation functioning
-- ✅ Conditional logic working
-
-### 7.3 Sprint 4.2: Submissions Management (Week 11)
+### 7.2 Sprint 4.1: Real-time Updates & Advanced Features (Week 10)
 
 #### Tasks
-- [ ] **Submissions List Page**
-  - Create submissions list component
-  - Implement DataTable with pagination
-  - Add search and filter
-  - Show submission date and status
-  - Implement sorting
+- [ ] **WebSocket Integration (Optional)**
+  - Set up WebSocket connection
+  - Handle real-time progress updates
+  - Implement reconnection logic
+  - Add connection status indicator
 
-- [ ] **Submission Detail View**
-  - Create submission detail page
-  - Display all submitted data
-  - Show submission metadata
-  - Add edit functionality (if allowed)
-  - Implement delete functionality
+- [ ] **Advanced Structure Editing**
+  - Add field templates
+  - Implement field groups
+  - Add conditional logic editor
+  - Support multi-page forms
 
-- [ ] **Data Export**
-  - Implement CSV export
-  - Implement Excel export
-  - Implement JSON export
-  - Add email export option
-  - Create export configuration
+- [ ] **Code Quality Features**
+  - Add code linting preview
+  - Show code quality metrics
+  - Display best practices suggestions
+  - Add code formatting options
 
-- [ ] **Submissions Analytics**
-  - Show submission count
-  - Display submission trends
-  - Add completion rate metrics
-  - Show field-level analytics
+- [ ] **Template Management**
+  - Create custom templates (admin)
+  - Import/export templates
+  - Template versioning
+  - Template preview improvements
 
 #### Deliverables
-- ✅ Submissions management interface
-- ✅ Export functionality
-- ✅ Basic analytics
+- ✅ Real-time updates (if implemented)
+- ✅ Advanced editing capabilities
+- ✅ Code quality features
+
+### 7.3 Sprint 4.2: User Experience & Dashboard (Week 11)
+
+#### Tasks
+- [ ] **Dashboard Enhancements**
+  - Add project statistics
+  - Show recent activity
+  - Display usage metrics
+  - Add quick start wizard
+
+- [ ] **Project Templates**
+  - Create project from template
+  - Save project as template
+  - Share templates with team
+  - Template gallery
+
+- [ ] **Collaboration Features** (Optional)
+  - Share project with team members
+  - Add comments on fields
+  - Track changes history
+  - Activity log
+
+- [ ] **User Preferences**
+  - Save editor preferences
+  - Customize code generation defaults
+  - Set favorite templates
+  - Configure notifications
+
+#### Deliverables
+- ✅ Enhanced dashboard
+- ✅ Project templates
+- ✅ Improved UX
 
 ### 7.4 Timeline: 2 weeks
 
 ---
 
-## Phase 5: Dashboard & Analytics (Week 12)
+## Phase 5: Manual Form Builder (Weeks 12-14)
 
 ### 8.1 Objectives
-- Create informative dashboard
-- Implement analytics and reporting
-- Add activity tracking
+- Build drag-and-drop form builder
+- Enable manual form creation
+- Support hybrid workflows (PDF + manual editing)
 
-### 8.2 Sprint 5.1: Dashboard (Week 12)
+### 8.2 Sprint 5.1: Form Builder Foundation (Week 12)
 
 #### Tasks
-- [ ] **Dashboard Page**
-  - Create dashboard layout
-  - Add statistics cards (total forms, submissions, users)
-  - Implement recent activity feed
-  - Add quick actions
-  - Show form performance metrics
+- [ ] **Form Builder Setup**
+  - Install drag-and-drop library (@dnd-kit/core)
+  - Create FormBuilder component structure
+  - Implement 3-column layout
+  - Create form builder state management
 
-- [ ] **Charts & Visualizations**
-  - Install charting library (recharts)
-  - Create submission trends chart
-  - Add form popularity chart
-  - Implement response time chart
-  - Add device/browser breakdown
+- [ ] **Field Palette**
+  - Create FieldPalette component
+  - Add all field types
+  - Implement drag from palette
+  - Group fields by category
 
-- [ ] **Dashboard Widgets**
-  - Recent forms widget
-  - Top performing forms widget
-  - Recent submissions widget
-  - User activity widget
-  - System notifications widget
+- [ ] **Form Canvas**
+  - Create FormCanvas component
+  - Implement drop zone
+  - Add field reordering
+  - Show field preview
 
 #### Deliverables
-- ✅ Functional dashboard
-- ✅ Charts and visualizations
-- ✅ Dashboard widgets
+- ✅ Basic form builder interface
+- ✅ Drag-and-drop functionality
 
-### 8.3 Timeline: 1 week
+### 8.3 Sprint 5.2: Form Builder Features (Week 13)
+
+#### Tasks
+- [ ] **Field Editor Panel**
+  - Create FieldEditor component
+  - Implement properties editor
+  - Add validation rules editor
+  - Support all field types
+
+- [ ] **Advanced Form Features**
+  - Implement conditional logic
+  - Add multi-page forms
+  - Support field calculations
+  - Add form preview mode
+
+#### Deliverables
+- ✅ Complete form builder
+- ✅ Advanced features
+
+### 8.4 Sprint 5.3: Integration & Testing (Week 14)
+
+#### Tasks
+- [ ] **Hybrid Workflow**
+  - Open PDF extraction in form builder
+  - Edit extracted forms manually
+  - Add fields to PDF-based forms
+  - Merge PDF and manual fields
+
+- [ ] **Form Builder Testing**
+  - Unit tests for builder components
+  - Integration tests
+  - Cross-browser testing
+  - Mobile responsiveness
+
+#### Deliverables
+- ✅ Hybrid workflow support
+- ✅ Comprehensive testing
+
+### 8.5 Timeline: 3 weeks
 
 ---
 
-## Phase 6: Testing & Quality Assurance (Weeks 13-14)
+## Phase 6: Testing & Quality Assurance (Week 15)
 
 ### 9.1 Objectives
-- Comprehensive testing of all features
+- Comprehensive testing
 - Bug fixes and optimizations
 - Performance improvements
 
-### 9.2 Sprint 6.1: Testing (Week 13)
+### 9.2 Sprint 6.1: Testing & Bug Fixes (Week 15)
 
 #### Tasks
-- [ ] **Unit Testing**
-  - Write tests for Redux slices
-  - Test custom hooks
-  - Test utility functions
-  - Test UI components
-  - Achieve >80% coverage
+- [ ] **Comprehensive Testing**
+  - Test all PDF workflows
+  - Test code generation
+  - Test form builder
+  - E2E testing of complete flows
 
-- [ ] **Integration Testing**
-  - Test authentication flows
-  - Test form builder workflows
-  - Test submission process
-  - Test user management
-  - Test API integration
-
-- [ ] **E2E Testing**
-  - Set up Playwright/Cypress
-  - Write critical path tests
-  - Test user registration and login
-  - Test form creation and publishing
-  - Test form submission
-
-#### Deliverables
-- ✅ Comprehensive test suite
-- ✅ >80% code coverage
-- ✅ E2E tests for critical paths
-
-### 9.3 Sprint 6.2: Bug Fixes & Optimization (Week 14)
-
-#### Tasks
 - [ ] **Bug Fixes**
-  - Fix all critical bugs
-  - Address high priority issues
+  - Fix critical bugs
+  - Address edge cases
   - Resolve UI/UX issues
   - Fix cross-browser issues
-  - Address mobile responsiveness
 
 - [ ] **Performance Optimization**
-  - Optimize bundle size
-  - Implement code splitting
-  - Add lazy loading
-  - Optimize images
-  - Reduce API calls
-  - Implement caching
+  - Optimize PDF rendering
+  - Improve code viewer performance
+  - Reduce bundle size
+  - Optimize API calls
 
-- [ ] **Accessibility**
+- [ ] **Accessibility & Security**
   - Run accessibility audits
+  - Security review
   - Fix WCAG violations
-  - Test with screen readers
-  - Improve keyboard navigation
-  - Add ARIA labels
-
-- [ ] **Security Review**
-  - Review authentication flow
-  - Check for XSS vulnerabilities
-  - Verify CSRF protection
-  - Review input sanitization
-  - Check for sensitive data exposure
+  - Review file upload security
 
 #### Deliverables
 - ✅ All critical bugs fixed
-- ✅ Optimized performance
-- ✅ WCAG 2.1 AA compliance
-- ✅ Security review completed
+- ✅ Performance optimized
+- ✅ Security hardened
 
-### 9.4 Timeline: 2 weeks
+### 9.3 Timeline: 1 week
 
 ---
 
-## Phase 7: Documentation & Deployment (Weeks 15-16)
+## Phase 7: Documentation & Deployment (Week 16)
 
 ### 10.1 Objectives
 - Create comprehensive documentation
@@ -677,12 +732,18 @@ npm install -D @testing-library/react @testing-library/jest-dom
 | Phase 0: Setup | 1 week | - | Dev environment, project structure |
 | Phase 1: Foundation | 2 weeks | 2 | Redux, API layer, layouts |
 | Phase 2: Auth | 2 weeks | 2 | Authentication, authorization |
-| Phase 3: Forms | 4 weeks | 4 | Form builder, CRUD operations |
-| Phase 4: Submissions | 2 weeks | 2 | Submission system, exports |
-| Phase 5: Dashboard | 1 week | 1 | Dashboard and analytics |
-| Phase 6: Testing | 2 weeks | 2 | Testing, bug fixes, optimization |
-| Phase 7: Deployment | 2 weeks | 2 | Documentation, deployment |
+| Phase 3: PDF & Code Gen | 4 weeks | 4 | PDF upload, doc intelligence, code generation |
+| Phase 4: Enhanced Features | 2 weeks | 2 | Real-time updates, advanced features |
+| Phase 5: Form Builder | 3 weeks | 3 | Manual form builder, hybrid workflows |
+| Phase 6: Testing | 1 week | 1 | Testing, bug fixes, optimization |
+| Phase 7: Deployment | 1 week | 1 | Documentation, deployment |
 | **Total** | **16 weeks** | **15** | **Complete application** |
+
+**Priority Breakdown:**
+- **Weeks 1-8**: Core infrastructure + PDF Intelligence & Code Generation (HIGH PRIORITY)
+- **Weeks 9-11**: Enhanced features and UX improvements
+- **Weeks 12-14**: Manual form builder (secondary feature)
+- **Weeks 15-16**: Testing, documentation, deployment
 
 ---
 

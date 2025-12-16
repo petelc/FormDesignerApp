@@ -1336,3 +1336,111 @@ export const fieldValidationSchema = Yup.object({
 ---
 
 This technical specification provides the detailed implementation contracts for building the Form Designer React Application. Each section should be referenced during development to ensure consistency and adherence to the architecture.
+
+### 2.9 PDF Intelligence & Code Generation Models
+
+```typescript
+// Project Model
+interface FormProject {
+  id: string;
+  name: string;
+  description: string;
+  status: ProjectStatus;
+  
+  // PDF Information
+  originalPdfUrl?: string;
+  originalPdfFileName?: string;
+  originalPdfSize?: number;
+  
+  // Document Intelligence
+  documentIntelligenceJobId?: string;
+  documentIntelligenceStatus?: 'pending' | 'processing' | 'completed' | 'failed';
+  documentIntelligenceResult?: DocumentIntelligenceResult;
+  
+  // Form Definition
+  formDefinition?: FormDefinition;
+  
+  // Code Generation
+  codeGenerationJobId?: string;
+  codeGenerationStatus?: 'pending' | 'processing' | 'completed' | 'failed';
+  generatedCode?: GeneratedCodeArtifacts;
+  selectedTemplate?: string;
+  
+  createdBy: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+enum ProjectStatus {
+  DRAFT = 'draft',
+  PDF_UPLOADED = 'pdf_uploaded',
+  ANALYZING = 'analyzing',
+  ANALYSIS_COMPLETE = 'analysis_complete',
+  STRUCTURE_REVIEWED = 'structure_reviewed',
+  GENERATING_CODE = 'generating_code',
+  CODE_GENERATED = 'code_generated'
+}
+
+// Document Intelligence
+interface DocumentIntelligenceResult {
+  jobId: string;
+  status: string;
+  createdAt: string;
+  completedAt?: string;
+  formStructure: ExtractedFormStructure;
+  overallConfidence?: number;
+}
+
+interface ExtractedFormStructure {
+  title?: string;
+  pages: PageStructure[];
+  fields: ExtractedField[];
+  sections?: FormSection[];
+}
+
+interface ExtractedField {
+  id: string;
+  label: string;
+  type: FieldType;
+  page: number;
+  boundingBox: BoundingBox;
+  required?: boolean;
+  confidence: number;
+}
+
+// Code Generation
+interface GeneratedCodeArtifacts {
+  jobId: string;
+  generatedAt: string;
+  frontend: {
+    component: GeneratedFile;
+    types?: GeneratedFile;
+    styles?: GeneratedFile;
+    validationSchema?: GeneratedFile;
+  };
+  backend?: {
+    controller?: GeneratedFile;
+    service?: GeneratedFile;
+    dto?: GeneratedFile;
+    entity?: GeneratedFile;
+  };
+  downloadUrl?: string;
+}
+
+interface GeneratedFile {
+  filename: string;
+  content: string;
+  language: string;
+  size: number;
+}
+
+interface CodeTemplate {
+  id: string;
+  name: string;
+  description: string;
+  framework: string;
+  supportsValidation: boolean;
+  supportsConditionalLogic: boolean;
+}
+```
+
