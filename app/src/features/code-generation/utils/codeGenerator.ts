@@ -432,6 +432,18 @@ const getDefaultValue = (fieldType: FieldType): string => {
 };
 
 /**
+ * Convert string to snake_case
+ */
+const toSnakeCase = (str: string): string => {
+  return str
+    .replace(/[^a-zA-Z0-9]/g, '_')
+    .replace(/([A-Z])/g, '_$1')
+    .toLowerCase()
+    .replace(/^_/, '')
+    .replace(/_+/g, '_');
+};
+
+/**
  * Convert string to PascalCase
  */
 const toPascalCase = (str: string): string => {
@@ -465,11 +477,17 @@ export const generateCode = (
   if (options.template === CodeTemplate.REACT_TYPESCRIPT) {
     const formCode = generateReactTypeScriptForm(formStructure, projectName, options);
     files.push({
-      path: 'src/components',
+      path: 'frontend/src/components',
       name: `${toPascalCase(projectName)}Form.tsx`,
       content: formCode,
       language: 'typescript',
     });
+  }
+  
+  // Generate backend code if requested
+  if (options.includeBackend && options.backendFramework) {
+    const backendFiles = generateBackendCode(formStructure, projectName, options);
+    files.push(...backendFiles);
   }
   
   // Generate README
@@ -481,20 +499,31 @@ export const generateCode = (
     language: 'markdown',
   });
   
-  // Generate package.json
-  const packageJson = generatePackageJson(projectName, options);
+  // Generate package.json for frontend
+  const frontendPackageJson = generatePackageJson(projectName, options);
   files.push({
-    path: '',
+    path: 'frontend',
     name: 'package.json',
-    content: packageJson,
+    content: frontendPackageJson,
     language: 'json',
   });
+  
+  // Generate package.json for backend if needed
+  if (options.includeBackend) {
+    const backendPackageJson = generateBackendPackageJson(projectName, options);
+    files.push({
+      path: 'backend',
+      name: 'package.json',
+      content: backendPackageJson,
+      language: 'json',
+    });
+  }
   
   return {
     files,
     structure: {
-      frontend: files.filter(f => f.path.includes('components') || f.name.includes('.tsx')).map(f => f.path + '/' + f.name),
-      backend: [],
+      frontend: files.filter(f => f.path.includes('frontend')).map(f => f.path + '/' + f.name),
+      backend: files.filter(f => f.path.includes('backend')).map(f => f.path + '/' + f.name),
       tests: [],
       docs: files.filter(f => f.language === 'markdown').map(f => f.name),
     },
@@ -504,6 +533,102 @@ export const generateCode = (
       fileCount: files.length,
     },
   };
+};
+
+/**
+ * Generate backend code files
+ */
+const generateBackendCode = (
+  formStructure: ExtractedFormStructure,
+  projectName: string,
+  options: CodeGenerationOptions
+): GeneratedFile[] => {
+  const files: GeneratedFile[] = [];
+  const { generateSQLSchema, generateTypeORMEntity, generateExpressRoutes, generateExpressController, generateBackendValidation } = require('./backendGenerator');
+  
+  const tableName = toSnakeCase(projectName);
+  const entityName = toPascalCase(projectName);
+  
+  // SQL Schema
+  const sqlSchema = generateSQLSchema(formStructure, tableName);
+  files.push({
+    path: 'backend/sql',
+    name: 'schema.sql',
+    content: sqlSchema,
+    language: 'sql',
+  });
+  
+  // TypeORM Entity
+  const entity = generateTypeORMEntity(formStructure, entityName);
+  files.push({
+    path: 'backend/src/models',
+    name: `${toCamelCase(projectName)}.model.ts`,
+    content: entity,
+    language: 'typescript',
+  });
+  
+  // Express Routes
+  const routes = generateExpressRoutes(formStructure, projectName);
+  files.push({
+    path: 'backend/src/routes',
+    name: `${toCamelCase(projectName)}.routes.ts`,
+    content: routes,
+    language: 'typescript',
+  });
+  
+  // Express Controller
+  const controller = generateExpressController(formStructure, projectName);
+  files.push({
+    path: 'backend/src/controllers',
+    name: `${toCamelCase(projectName)}.controller.ts`,
+    content: controller,
+    language: 'typescript',
+  });
+  
+  // Backend Validation
+  const validation = generateBackendValidation(formStructure, projectName);
+  files.push({
+    path: 'backend/src/validation',
+    name: `${toCamelCase(projectName)}.validation.ts`,
+    content: validation,
+    language: 'typescript',
+  });
+  
+  return files;
+};
+
+/**
+ * Generate backend package.json
+ */
+const generateBackendPackageJson = (projectName: string, options: CodeGenerationOptions): string => {
+  const dependencies: Record<string, string> = {
+    "express": "^4.18.0",
+    "express-validator": "^7.0.0",
+    "typeorm": "^0.3.0",
+    "pg": "^8.11.0",
+  };
+  
+  const devDependencies: Record<string, string> = {
+    "@types/express": "^4.17.0",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "ts-node": "^10.9.0",
+    "nodemon": "^3.0.0",
+  };
+  
+  return JSON.stringify({
+    name: `${projectName.toLowerCase().replace(/\s+/g, '-')}-api`,
+    version: "1.0.0",
+    description: `Backend API for ${projectName}`,
+    main: "src/index.ts",
+    scripts: {
+      "dev": "nodemon --exec ts-node src/index.ts",
+      "build": "tsc",
+      "start": "node dist/index.js",
+    },
+    dependencies,
+    devDependencies,
+  }, null, 2);
 };
 
 /**
