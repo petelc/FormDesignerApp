@@ -19,6 +19,7 @@ import DashboardPage from '@/features/projects/pages/DashboardPage';
 import ProjectsListPage from '@/features/projects/pages/ProjectsListPage';
 import ProjectDetailPage from '@/features/projects/pages/ProjectDetailPage';
 import UsersPage from '@/features/users/pages/UsersPage';
+import ProfilePage from '@/features/users/pages/ProfilePage';
 import UIShowcasePage from '@/shared/components/layout/UIShowcasePage';
 
 // Other pages
@@ -72,6 +73,14 @@ export const routes: RouteObject[] = [
       {
         path: 'projects/:id',
         element: <ProjectDetailPage />,
+      },
+      {
+        path: 'profile',
+        element: <ProfilePage />,
+      },
+      {
+        path: 'settings',
+        element: <ProfilePage />, // Can be same as profile or separate
       },
       {
         path: 'users',

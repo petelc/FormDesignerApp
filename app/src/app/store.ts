@@ -1,13 +1,15 @@
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from '@/features/auth/slices/authSlice';
 import toastReducer from '@/shared/components/ui/toastSlice';
+import projectsReducer from '@/features/projects/slices/projectsSlice';
+import usersReducer from '@/features/users/slices/usersSlice';
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
     toast: toastReducer,
-    // Add more reducers here as they are created
-    // projects: projectsReducer,
+    projects: projectsReducer,
+    users: usersReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
