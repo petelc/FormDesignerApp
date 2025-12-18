@@ -8,6 +8,7 @@ import {
   togglePreviewMode,
   undo,
   redo,
+  addSection,
 } from '../slices/formBuilderSlice';
 import FieldPalette from '../components/FieldPalette';
 import FormCanvas from '../components/FormCanvas';
@@ -63,8 +64,8 @@ const FormBuilderPage = () => {
   const handleGenerateCode = () => {
     if (!currentForm) return;
 
-    // Navigate to code generation
-    navigate(`/app/form-builder/${currentForm.id}/generate`);
+    // Navigate to code generation page
+    navigate(`/app/form-builder/generate`);
   };
 
   if (isLoading) {
@@ -114,6 +115,15 @@ const FormBuilderPage = () => {
                 ↷ Redo
               </Button>
             </ButtonGroup>
+
+            {/* Sections */}
+            <Button
+              variant="outline-info"
+              size="sm"
+              onClick={() => dispatch(addSection())}
+            >
+              📦 Add Section
+            </Button>
 
             {/* Preview */}
             <Button

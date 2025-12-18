@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Card, Alert } from 'react-bootstrap';
+import { Card, Alert, Button, Badge } from 'react-bootstrap';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { addField, reorderField, selectField } from '../slices/formBuilderSlice';
 import { FieldType } from '../types';
@@ -63,6 +63,7 @@ const SectionCanvas: React.FC<SectionCanvasProps> = ({
   draggedFieldType,
 }) => {
   const dispatch = useAppDispatch();
+  const [isCollapsed, setIsCollapsed] = useState(section.collapsed || false);
 
   const sortedFields = [...fields].sort((a, b) => a.position.order - b.position.order);
 
@@ -99,51 +100,132 @@ const SectionCanvas: React.FC<SectionCanvasProps> = ({
     e.dataTransfer.dropEffect = 'copy';
   };
 
+  // Group fields by columns
+  const fieldsByColumn: any[][] = [];
+  if (section.columns > 1) {
+    for (let i = 0; i < section.columns; i++) {
+      fieldsByColumn[i] = [];
+    }
+    sortedFields.forEach((field, index) => {
+      const columnIndex = index % section.columns;
+      fieldsByColumn[columnIndex].push(field);
+    });
+  }
+
   return (
     <div className="mb-4">
+      {/* Section Header */}
       {section.title !== 'Form Fields' && (
-        <div className="mb-3">
-          <h6>{section.title}</h6>
-          {section.description && (
-            <small className="text-muted">{section.description}</small>
-          )}
+        <div className="mb-3 d-flex align-items-center justify-content-between">
+          <div className="flex-grow-1">
+            <div className="d-flex align-items-center gap-2">
+              {section.collapsible && (
+                <Button
+                  variant="link"
+                  size="sm"
+                  className="p-0 text-decoration-none"
+                  onClick={() => setIsCollapsed(!isCollapsed)}
+                >
+                  {isCollapsed ? '▶' : '▼'}
+                </Button>
+              )}
+              <h6 className="mb-0">{section.title}</h6>
+              {section.columns > 1 && (
+                <Badge bg="info" style={{ fontSize: '0.7rem' }}>
+                  {section.columns} columns
+                </Badge>
+              )}
+            </div>
+            {section.description && (
+              <small className="text-muted">{section.description}</small>
+            )}
+          </div>
         </div>
       )}
 
-      {/* Drop zone before first field */}
-      {sortedFields.length === 0 ? (
-        <DropZone
-          position={0}
-          onDrop={handleDrop}
-          onDragOver={handleDragOver}
-          isActive={!!draggedFieldType}
-          isEmpty={true}
-        />
-      ) : (
+      {/* Section Content */}
+      {!isCollapsed && (
         <>
-          <DropZone
-            position={0}
-            onDrop={handleDrop}
-            onDragOver={handleDragOver}
-            isActive={!!draggedFieldType}
-          />
+          {section.columns === 1 ? (
+            // Single column layout
+            <>
+              {sortedFields.length === 0 ? (
+                <DropZone
+                  position={0}
+                  onDrop={handleDrop}
+                  onDragOver={handleDragOver}
+                  isActive={!!draggedFieldType}
+                  isEmpty={true}
+                />
+              ) : (
+                <>
+                  <DropZone
+                    position={0}
+                    onDrop={handleDrop}
+                    onDragOver={handleDragOver}
+                    isActive={!!draggedFieldType}
+                  />
 
-          {/* Render fields with drop zones between */}
-          {sortedFields.map((field, index) => (
-            <div key={field.id}>
-              <FieldRenderer
-                field={field}
-                isSelected={field.id === selectedFieldId}
-                onSelect={() => dispatch(selectField(field.id))}
-              />
-              <DropZone
-                position={index + 1}
-                onDrop={handleDrop}
-                onDragOver={handleDragOver}
-                isActive={!!draggedFieldType}
-              />
+                  {sortedFields.map((field, index) => (
+                    <div key={field.id}>
+                      <FieldRenderer
+                        field={field}
+                        isSelected={field.id === selectedFieldId}
+                        onSelect={() => dispatch(selectField(field.id))}
+                      />
+                      <DropZone
+                        position={index + 1}
+                        onDrop={handleDrop}
+                        onDragOver={handleDragOver}
+                        isActive={!!draggedFieldType}
+                      />
+                    </div>
+                  ))}
+                </>
+              )}
+            </>
+          ) : (
+            // Multi-column layout
+            <div className="row">
+              {Array.from({ length: section.columns }).map((_, colIndex) => (
+                <div key={colIndex} className={`col-md-${12 / section.columns}`}>
+                  {fieldsByColumn[colIndex]?.length === 0 ? (
+                    <DropZone
+                      position={colIndex}
+                      onDrop={handleDrop}
+                      onDragOver={handleDragOver}
+                      isActive={!!draggedFieldType}
+                      isEmpty={true}
+                    />
+                  ) : (
+                    <>
+                      <DropZone
+                        position={colIndex * Math.ceil(sortedFields.length / section.columns)}
+                        onDrop={handleDrop}
+                        onDragOver={handleDragOver}
+                        isActive={!!draggedFieldType}
+                      />
+                      {fieldsByColumn[colIndex]?.map((field, index) => (
+                        <div key={field.id}>
+                          <FieldRenderer
+                            field={field}
+                            isSelected={field.id === selectedFieldId}
+                            onSelect={() => dispatch(selectField(field.id))}
+                          />
+                          <DropZone
+                            position={colIndex * Math.ceil(sortedFields.length / section.columns) + index + 1}
+                            onDrop={handleDrop}
+                            onDragOver={handleDragOver}
+                            isActive={!!draggedFieldType}
+                          />
+                        </div>
+                      ))}
+                    </>
+                  )}
+                </div>
+              ))}
             </div>
-          ))}
+          )}
         </>
       )}
     </div>

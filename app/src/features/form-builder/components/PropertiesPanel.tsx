@@ -3,6 +3,8 @@ import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { updateField } from '../slices/formBuilderSlice';
 import { FormField, FieldType, FieldOption } from '../types';
 import { useState } from 'react';
+import ValidationBuilder from './ValidationBuilder';
+import ConditionalLogicBuilder from './ConditionalLogicBuilder';
 
 const PropertiesPanel = () => {
   const dispatch = useAppDispatch();
@@ -132,7 +134,23 @@ const PropertiesPanel = () => {
           <strong>Validation</strong>
         </Card.Header>
         <Card.Body>
-          <ValidationRulesEditor field={selectedField} onUpdate={handleUpdate} />
+          <ValidationBuilder
+            field={selectedField}
+            onUpdate={(validations) => handleUpdate({ validations })}
+          />
+        </Card.Body>
+      </Card>
+
+      {/* Conditional Logic */}
+      <Card className="mb-3">
+        <Card.Header className="bg-white py-2">
+          <strong>Conditional Display</strong>
+        </Card.Header>
+        <Card.Body>
+          <ConditionalLogicBuilder
+            field={selectedField}
+            onUpdate={(conditional) => handleUpdate({ conditional })}
+          />
         </Card.Body>
       </Card>
     </div>
@@ -294,40 +312,6 @@ const OptionsEditor: React.FC<OptionsEditorProps> = ({ field, onUpdate }) => {
       <Button variant="outline-primary" size="sm" onClick={handleAddOption}>
         + Add Option
       </Button>
-    </div>
-  );
-};
-
-interface ValidationRulesEditorProps {
-  field: FormField;
-  onUpdate: (updates: Partial<FormField>) => void;
-}
-
-const ValidationRulesEditor: React.FC<ValidationRulesEditorProps> = ({ field }) => {
-  return (
-    <div>
-      {(field.type === FieldType.TEXT || field.type === FieldType.TEXTAREA) && (
-        <>
-          <Form.Group className="mb-2">
-            <Form.Label>Min Length</Form.Label>
-            <Form.Control type="number" placeholder="0" size="sm" />
-          </Form.Group>
-          <Form.Group className="mb-2">
-            <Form.Label>Max Length</Form.Label>
-            <Form.Control type="number" placeholder="255" size="sm" />
-          </Form.Group>
-        </>
-      )}
-
-      {field.type === FieldType.EMAIL && (
-        <Form.Check type="checkbox" label="Validate email format" defaultChecked disabled />
-      )}
-
-      {field.type === FieldType.PHONE && (
-        <Form.Check type="checkbox" label="Validate phone format" defaultChecked disabled />
-      )}
-
-      <small className="text-muted">Advanced validation coming soon!</small>
     </div>
   );
 };

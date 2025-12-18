@@ -22,6 +22,7 @@ import UsersPage from '@/features/users/pages/UsersPage';
 import ProfilePage from '@/features/users/pages/ProfilePage';
 import UIShowcasePage from '@/shared/components/layout/UIShowcasePage';
 import FormBuilderPage from '@/features/form-builder/pages/FormBuilderPage';
+import CodeGenerationPage from '@/features/form-builder/pages/CodeGenerationPage';
 
 // Other pages
 import HomePage from '@/shared/components/layout/HomePage';
@@ -82,6 +83,10 @@ export const routes: RouteObject[] = [
       {
         path: 'form-builder/:id',
         element: <FormBuilderPage />,
+      },
+      {
+        path: 'form-builder/generate',
+        element: <CodeGenerationPage />,
       },
       {
         path: 'profile',
