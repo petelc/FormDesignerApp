@@ -9,6 +9,7 @@ import { ROUTES } from '@/shared/constants';
 const registerSchema = Yup.object({
   firstName: Yup.string().required('First name is required'),
   lastName: Yup.string().required('Last name is required'),
+  userName: Yup.string().required('Username is required'),
   email: Yup.string().email('Invalid email address').required('Email is required'),
   password: Yup.string()
     .min(8, 'Password must be at least 8 characters')
@@ -53,6 +54,7 @@ const RegisterPage = () => {
                 initialValues={{
                   firstName: '',
                   lastName: '',
+                  userName: '',
                   email: '',
                   password: '',
                   confirmPassword: '',
@@ -98,6 +100,23 @@ const RegisterPage = () => {
                         </Form.Group>
                       </Col>
                     </Row>
+                    
+                    <Form.Group className="mb-3">
+                      <Form.Label>Username</Form.Label>
+                      <Form.Control
+                        type="text"
+                        name="userName"
+                        value={values.userName}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        isInvalid={touched.userName && !!errors.userName}
+                        placeholder="doej"
+                      />
+                      <Form.Control.Feedback type="invalid">
+                        {errors.userName}
+                      </Form.Control.Feedback>
+                    </Form.Group>
+                      
 
                     <Form.Group className="mb-3">
                       <Form.Label>Email Address</Form.Label>

@@ -58,9 +58,12 @@ export const fetchProjects = createAsyncThunk(
   ) => {
     try {
       const paginationParams = pagination || { page: 1, pageSize: 10 };
+      console.log('Fetching projects with params:', { paginationParams, filters });
       const response = await projectsAPI.getProjects(paginationParams, filters);
+      console.log('Projects API response:', response);
       return response;
     } catch (error) {
+      console.error('Error fetching projects:', error);
       return rejectWithValue(handleApiError(error));
     }
   }

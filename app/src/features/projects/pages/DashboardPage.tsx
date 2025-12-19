@@ -15,20 +15,21 @@ const DashboardPage = () => {
     dispatch(fetchProjects({ pagination: { page: 1, pageSize: 100 } }));
   }, [dispatch]);
 
-  // Calculate statistics
-  const totalProjects = items.length;
-  const completedProjects = items.filter(
+  // Calculate statistics with safety check
+  const projects = items || [];
+  const totalProjects = projects.length;
+  const completedProjects = projects.filter(
     (p) => p.status === ProjectStatus.COMPLETED || p.status === ProjectStatus.CODE_GENERATED
   ).length;
-  const inProgressProjects = items.filter(
+  const inProgressProjects = projects.filter(
     (p) =>
       p.status === ProjectStatus.ANALYZING ||
       p.status === ProjectStatus.GENERATING_CODE ||
       p.status === ProjectStatus.STRUCTURE_REVIEWED
   ).length;
-  const draftProjects = items.filter((p) => p.status === ProjectStatus.DRAFT).length;
+  const draftProjects = projects.filter((p) => p.status === ProjectStatus.DRAFT).length;
 
-  if (isLoading && items.length === 0) {
+  if (isLoading && projects.length === 0) {
     return <LoadingSpinner fullScreen message="Loading dashboard..." />;
   }
 
@@ -118,11 +119,11 @@ const DashboardPage = () => {
           <Card className="shadow-sm h-100">
             <Card.Body className="p-4">
               <h3 className="mb-3">Recent Activity</h3>
-              {items.length === 0 ? (
+              {projects.length === 0 ? (
                 <p className="text-muted">No activity yet</p>
               ) : (
                 <div>
-                  {items.slice(0, 3).map((project) => (
+                  {projects.slice(0, 3).map((project) => (
                     <div key={project.id} className="mb-3 pb-3 border-bottom">
                       <Link
                         to={`/app/projects/${project.id}`}

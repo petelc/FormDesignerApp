@@ -3,7 +3,6 @@ import authReducer from '@/features/auth/slices/authSlice';
 import toastReducer from '@/shared/components/ui/toastSlice';
 import projectsReducer from '@/features/projects/slices/projectsSlice';
 import usersReducer from '@/features/users/slices/usersSlice';
-import formBuilderReducer from '@/features/form-builder/slices/formBuilderSlice';
 
 export const store = configureStore({
   reducer: {
@@ -11,7 +10,6 @@ export const store = configureStore({
     toast: toastReducer,
     projects: projectsReducer,
     users: usersReducer,
-    formBuilder: formBuilderReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

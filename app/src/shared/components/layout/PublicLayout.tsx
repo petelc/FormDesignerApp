@@ -35,7 +35,7 @@ const PublicLayout = () => {
       <footer className="bg-light py-3 mt-auto">
         <Container>
           <div className="text-center text-muted">
-            <small>&copy; 2025 {APP_NAME}. All rights reserved.</small>
+            <small>&copy; 2025 {APP_NAME} - Ohio Department of Rehabilitation and Correction. All rights reserved.</small>
           </div>
         </Container>
       </footer>

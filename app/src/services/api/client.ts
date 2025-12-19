@@ -31,9 +31,20 @@ apiClient.interceptors.request.use(
 // Response interceptor - Handle token refresh and errors
 apiClient.interceptors.response.use(
   (response) => {
+    console.log('API Response:', {
+      url: response.config.url,
+      status: response.status,
+      data: response.data,
+    });
     return response;
   },
   async (error: AxiosError) => {
+    console.error('API Error:', {
+      url: error.config?.url,
+      status: error.response?.status,
+      data: error.response?.data,
+    });
+    
     const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
     // Handle 401 Unauthorized - Token expired
@@ -45,7 +56,7 @@ apiClient.interceptors.response.use(
         const refreshToken = localStorage.getItem('refreshToken');
         
         if (refreshToken) {
-          const response = await axios.post(`${API_BASE_URL}/api/auth/refresh`, {
+          const response = await axios.post(`${API_BASE_URL}/refresh`, {
             refreshToken,
           });
 
