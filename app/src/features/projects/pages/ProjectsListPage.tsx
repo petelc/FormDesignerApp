@@ -9,7 +9,7 @@ import {
   deleteProject,
   clearError,
 } from '../slices/projectsSlice';
-import { ProjectStatus } from '../types';
+import { ProjectStatus, ProjectFilters } from '../types';
 import CreateProjectModal from '../components/CreateProjectModal';
 import ProjectCard from '../components/ProjectCard';
 import { LoadingSpinner, EmptyState, ConfirmDialog } from '@/shared/components/ui';
@@ -33,14 +33,23 @@ const ProjectsListPage = () => {
 
   // Load projects on mount and when filters change
   useEffect(() => {
+    const activeFilters: ProjectFilters = {};
+    
+    if (debouncedSearch) {
+      activeFilters.search = debouncedSearch;
+    }
+    
+    if (statusFilter) {
+      activeFilters.status = statusFilter;
+    }
+    
     dispatch(fetchProjects({ 
       pagination: { page: 1, pageSize: 10 },
-      filters: {
-        search: debouncedSearch || undefined,
-        status: statusFilter || undefined,
-      }
+      filters: Object.keys(activeFilters).length > 0 ? activeFilters : undefined,
     }));
   }, [dispatch, debouncedSearch, statusFilter]);
+
+  
 
   const handleCreateProject = async (values: { name: string; description: string }) => {
     const result = await dispatch(createProject(values));
@@ -79,9 +88,15 @@ const ProjectsListPage = () => {
     setStatusFilter(status as ProjectStatus | '');
   };
 
-  if (isLoading && items.length === 0) {
+  // Safety check for items array
+  const projects = items || [];
+
+  if (isLoading && projects.length === 0) {
     return <LoadingSpinner fullScreen message="Loading projects..." />;
   }
+
+  console.log(projects);
+
 
   return (
     <div>
@@ -132,7 +147,7 @@ const ProjectsListPage = () => {
       </Card>
 
       {/* Projects Grid */}
-      {items.length === 0 ? (
+      {projects.length === 0 ? (
         <EmptyState
           icon="📁"
           title="No projects yet"
@@ -143,7 +158,7 @@ const ProjectsListPage = () => {
       ) : (
         <>
           <Row className="g-4">
-            {items.map((project) => (
+            {projects.map((project) => (
               <Col key={project.id} md={6} lg={4}>
                 <ProjectCard
                   project={project}
@@ -157,7 +172,7 @@ const ProjectsListPage = () => {
           {pagination.totalPages > 1 && (
             <div className="d-flex justify-content-center mt-4">
               <p className="text-muted">
-                Showing {items.length} of {pagination.total} projects
+                Showing {projects.length} of {pagination.total} projects
               </p>
             </div>
           )}

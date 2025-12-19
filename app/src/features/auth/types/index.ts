@@ -10,12 +10,13 @@ export interface AuthState {
 }
 
 export interface LoginRequest {
-  email: string;
+  userName: string;
   password: string;
   rememberMe?: boolean;
 }
 
 export interface RegisterRequest {
+  userName: string;
   email: string;
   password: string;
   confirmPassword: string;

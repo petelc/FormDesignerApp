@@ -9,11 +9,11 @@ const HomePage = () => {
       <Row className="align-items-center mb-5">
         <Col lg={6}>
           <h1 className="display-4 fw-bold mb-4">
-            AI-Powered Form Designer
+            Form Designer
           </h1>
           <p className="lead mb-4">
             Transform PDF forms into production-ready code in minutes. Upload, analyze, and
-            generate complete React applications with backend APIs automatically.
+            generate React components with backend APIs automatically.
           </p>
           <div className="d-flex gap-3">
             <Link to={ROUTES.REGISTER}>
@@ -30,8 +30,8 @@ const HomePage = () => {
         </Col>
         <Col lg={6} className="mt-4 mt-lg-0">
           <div className="bg-light rounded p-5 text-center">
-            <div style={{ fontSize: '5rem' }}>📄 ➜ 🤖 ➜ 💻</div>
-            <p className="text-muted mt-3">PDF → AI Analysis → Generated Code</p>
+            <div style={{ fontSize: '4rem' }}>📄 ➜ 🤖 ➜ 💻</div>
+            <p className="text-muted mt-3">PDF → Document Intelligence Analysis → Generated Code</p>
           </div>
         </Col>
       </Row>
@@ -87,11 +87,11 @@ const HomePage = () => {
         <Col className="text-center">
           <h2 className="mb-3">Ready to accelerate your development?</h2>
           <p className="lead mb-4">
-            Join developers who are building forms 10x faster with {APP_NAME}
+            Join developers who are building forms faster with {APP_NAME}
           </p>
           <Link to={ROUTES.REGISTER}>
             <Button variant="light" size="lg">
-              Start Free Trial
+              Get Started
             </Button>
           </Link>
         </Col>

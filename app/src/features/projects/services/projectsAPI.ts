@@ -7,6 +7,15 @@ import {
 } from '../types';
 import { PaginatedResponse, PaginationParams } from '@/shared/types';
 
+// Backend API response structure
+interface BackendPagedProjectsResult {
+  projects: FormProject[];
+  totalCount: number;
+  pageNumber: number;
+  pageSize: number;
+  totalPages: number;
+}
+
 export const projectsAPI = {
   /**
    * Get all projects with pagination and filters
@@ -15,15 +24,36 @@ export const projectsAPI = {
     pagination: PaginationParams,
     filters?: ProjectFilters
   ): Promise<PaginatedResponse<FormProject>> => {
-    const params = {
+    const params: Record<string, string | number | undefined> = {
       page: pagination.page,
       pageSize: pagination.pageSize,
-      ...filters,
     };
-    const response = await apiClient.get<PaginatedResponse<FormProject>>('/api/projects', {
+    
+    if (filters) {
+      Object.keys(filters).forEach((key) => {
+        const value = filters[key as keyof ProjectFilters];
+        if (value !== undefined && value !== null && value !== '') {
+          params[key] = value;
+        }
+      });
+    }
+    
+    const response = await apiClient.get<BackendPagedProjectsResult>('/api/projects', {
       params,
     });
-    return response.data;
+    
+    const backendData = response.data;
+    
+    console.log('Backend API response:', backendData);
+    
+    // Map backend response structure to frontend structure
+    return {
+      data: backendData.projects,
+      page: backendData.pageNumber,
+      pageSize: backendData.pageSize,
+      totalCount: backendData.totalCount,
+      totalPages: backendData.totalPages,
+    };
   },
 
   /**

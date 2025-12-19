@@ -7,7 +7,7 @@ import { useAuth } from '@/shared/hooks';
 import { ROUTES } from '@/shared/constants';
 
 const loginSchema = Yup.object({
-  email: Yup.string().email('Invalid email address').required('Email is required'),
+  userName: Yup.string().required('Username is required'),
   password: Yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
   rememberMe: Yup.boolean(),
 });
@@ -23,7 +23,7 @@ const LoginPage = () => {
     }
   }, [isAuthenticated, navigate]);
 
-  const handleSubmit = async (values: { email: string; password: string; rememberMe: boolean }) => {
+  const handleSubmit = async (values: { userName: string; password: string; rememberMe: boolean }) => {
     await login(values);
   };
 
@@ -42,24 +42,24 @@ const LoginPage = () => {
               )}
 
               <Formik
-                initialValues={{ email: '', password: '', rememberMe: false }}
+                initialValues={{ userName: '', password: '', rememberMe: false }}
                 validationSchema={loginSchema}
                 onSubmit={handleSubmit}
               >
                 {({ values, errors, touched, handleChange, handleBlur, handleSubmit }) => (
                   <Form onSubmit={handleSubmit}>
                     <Form.Group className="mb-3">
-                      <Form.Label>Email Address</Form.Label>
+                      <Form.Label>Username</Form.Label>
                       <Form.Control
-                        type="email"
-                        name="email"
-                        value={values.email}
+                        type="text"
+                        name="userName"
+                        value={values.userName}
                         onChange={handleChange}
                         onBlur={handleBlur}
-                        isInvalid={touched.email && !!errors.email}
-                        placeholder="Enter your email"
+                        isInvalid={touched.userName && !!errors.userName}
+                        placeholder="Enter your username"
                       />
-                      <Form.Control.Feedback type="invalid">{errors.email}</Form.Control.Feedback>
+                      <Form.Control.Feedback type="invalid">{errors.userName}</Form.Control.Feedback>
                     </Form.Group>
 
                     <Form.Group className="mb-3">
