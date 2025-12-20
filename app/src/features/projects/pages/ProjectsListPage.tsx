@@ -95,7 +95,7 @@ const ProjectsListPage = () => {
     return <LoadingSpinner fullScreen message="Loading projects..." />;
   }
 
-  console.log(projects);
+  
 
 
   return (
