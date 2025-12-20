@@ -93,16 +93,11 @@ export const projectsAPI = {
    */
   uploadPdf: async (projectId: string, file: File): Promise<FormProject> => {
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append('pdfFile', file);
 
     const response = await apiClient.post<FormProject>(
       `/api/projects/${projectId}/upload-pdf`,
-      formData,
-      {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      }
+      formData
     );
     return response.data;
   },

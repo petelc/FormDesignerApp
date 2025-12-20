@@ -165,9 +165,11 @@ const ProjectDetailPage = () => {
       [ProjectStatus.FAILED]: 'danger',
     };
 
+    const status = currentProject.status || ProjectStatus.DRAFT;
+    
     return (
-      <Badge bg={statusColors[currentProject.status]}>
-        {currentProject.status.split('_').map(word => 
+      <Badge bg={statusColors[status]}>
+        {status.split('_').map(word => 
           word.charAt(0) + word.slice(1).toLowerCase()
         ).join(' ')}
       </Badge>
