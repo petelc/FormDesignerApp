@@ -30,6 +30,7 @@
     "react-router-dom": "^7.10.1",
     "react-syntax-highlighter": "^16.1.0",
     "sass": "^1.97.0",
+    "uuid": "^13.0.0",
     "yup": "^1.7.1"
   },
   "devDependencies": {

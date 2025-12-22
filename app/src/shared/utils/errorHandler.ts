@@ -6,6 +6,20 @@ import { ApiError } from '@/shared/types';
  */
 export const handleApiError = (error: unknown): string => {
   if (error instanceof AxiosError) {
+    // Handle network errors (no response received)
+    if (!error.response) {
+      if (error.code === 'ECONNABORTED') {
+        return 'Request timeout. Please try again.';
+      }
+      if (error.code === 'ERR_NETWORK') {
+        return 'Cannot connect to server. Please check if the backend is running.';
+      }
+      if (error.message.includes('Network Error')) {
+        return 'Network error. Please check your connection and ensure the server is running.';
+      }
+      return error.message || 'Cannot connect to server. Please try again.';
+    }
+
     const apiError = error.response?.data as ApiError | undefined;
 
     if (apiError?.message) {

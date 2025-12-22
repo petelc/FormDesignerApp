@@ -58,7 +58,7 @@ const ProjectDetailPage = () => {
   }, [dispatch, id]);
 
   // Poll analysis status if analyzing
-  const { isPolling } = usePolling(
+  const { isPolling, data: pollingData } = usePolling(
     async () => {
       if (!id) return null;
       const status = await projectsAPI.getAnalysisStatus(id);
@@ -72,32 +72,13 @@ const ProjectDetailPage = () => {
       
       return status;
     },
-    async (result) => {
+    (result) => {
       const isDone = result?.status === 'completed' || 
                      result?.status === 'failed' || 
                      result?.status === 'Completed' || 
                      result?.status === 'Failed' ||
                      result?.status === 'ANALYSING_COMPLETE' ||
                      result?.status === 'ANALYSIS_COMPLETE';
-      
-      if (isDone && id) {
-        console.log('Analysis completed! Status:', result?.status);
-        
-        // Fetch the analysis results
-        try {
-          const analysisResult = await projectsAPI.getAnalysisResult(id);
-          console.log('Fetched analysis results:', analysisResult);
-          
-          // Update current project with the results
-          await dispatch(fetchProject(id));
-          
-          toast.success('Analysis complete!');
-          setActiveTab('analysis');
-        } catch (error) {
-          console.error('Error fetching analysis results:', error);
-          toast.error('Analysis complete but failed to load results');
-        }
-      }
       
       return isDone;
     },
@@ -107,6 +88,41 @@ const ProjectDetailPage = () => {
       maxAttempts: 60,
     }
   );
+
+  // Handle completion when polling stops
+  useEffect(() => {
+    if (!isPolling && pollingData && id) {
+      const isDone = pollingData?.status === 'completed' || 
+                     pollingData?.status === 'failed' || 
+                     pollingData?.status === 'Completed' || 
+                     pollingData?.status === 'Failed' ||
+                     pollingData?.status === 'ANALYSING_COMPLETE' ||
+                     pollingData?.status === 'ANALYSIS_COMPLETE';
+      
+      if (isDone) {
+        console.log('Analysis completed! Status:', pollingData?.status);
+        
+        // Fetch the analysis results
+        const fetchResults = async () => {
+          try {
+            const analysisResult = await projectsAPI.getAnalysisResult(id);
+            console.log('Fetched analysis results:', analysisResult);
+            
+            // Update current project with the results
+            await dispatch(fetchProject(id));
+            
+            toast.success('Analysis complete!');
+            setActiveTab('analysis');
+          } catch (error) {
+            console.error('Error fetching analysis results:', error);
+            toast.error('Analysis complete but failed to load results');
+          }
+        };
+        
+        fetchResults();
+      }
+    }
+  }, [isPolling, pollingData, id, dispatch, toast]);
 
   const handleFileSelected = async (file: File) => {
     if (!id) return;

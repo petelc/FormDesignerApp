@@ -22,6 +22,7 @@ const PrivateLayout = () => {
   const navItems = [
     { to: '/app/dashboard', label: 'Dashboard', icon: '📊' },
     { to: '/app/projects', label: 'Projects', icon: '📁' },
+    { to: '/app/form-builder', label: 'Form Builder', icon: '🛠️' },
     { to: '/app/ui-showcase', label: 'UI Showcase', icon: '🎨' },
   ];
 

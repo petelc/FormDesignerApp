@@ -2,6 +2,9 @@ import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
+// Log the API base URL for debugging
+console.log('API Base URL:', API_BASE_URL);
+
 // Create axios instance
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -44,13 +47,36 @@ apiClient.interceptors.response.use(
     return response;
   },
   async (error: AxiosError) => {
-    console.error('API Error:', {
-      url: error.config?.url,
-      status: error.response?.status,
-      data: error.response?.data,
-    });
+    // Better error logging
+    if (!error.response) {
+      // Network error - no response received
+      console.error('Network Error:', {
+        message: error.message,
+        url: error.config?.url,
+        code: error.code,
+        detail: 'No response from server. Server may be down or CORS is blocking the request.',
+      });
+    } else {
+      // Server responded with error
+      console.error('API Error:', {
+        url: error.config?.url,
+        status: error.response?.status,
+        data: error.response?.data,
+      });
+    }
     
     const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
+
+    // Handle network errors (no response from server)
+    if (!error.response) {
+      // Add user-friendly error message
+      const networkError = new Error(
+        `Cannot connect to server at ${API_BASE_URL}. Please check if the backend is running.`
+      ) as AxiosError;
+      networkError.config = error.config;
+      networkError.code = error.code;
+      return Promise.reject(networkError);
+    }
 
     // Handle 401 Unauthorized - Token expired
     if (error.response?.status === 401 && !originalRequest._retry) {
