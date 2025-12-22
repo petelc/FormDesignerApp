@@ -47,12 +47,21 @@ const ExtractedFieldsList: React.FC<ExtractedFieldsListProps> = ({
 }) => {
   const [editingField, setEditingField] = useState<string | null>(null);
 
+  // Normalize fields to handle missing properties from backend
+  const normalizedFields = fields.map((field, index) => ({
+    ...field,
+    id: field.id || field.name || `field-${index}`,
+    page: field.page || 1,
+    confidence: field.confidence || undefined,
+  }));
+
   // Group fields by page
-  const fieldsByPage = fields.reduce((acc, field) => {
-    if (!acc[field.page]) {
-      acc[field.page] = [];
+  const fieldsByPage = normalizedFields.reduce((acc, field) => {
+    const page = field.page || 1;
+    if (!acc[page]) {
+      acc[page] = [];
     }
-    acc[field.page].push(field);
+    acc[page].push(field);
     return acc;
   }, {} as Record<number, ExtractedField[]>);
 
@@ -99,9 +108,11 @@ const ExtractedFieldsList: React.FC<ExtractedFieldsListProps> = ({
                           {field.required && (
                             <Badge bg="danger">Required</Badge>
                           )}
-                          <Badge bg={getConfidenceColor(field.confidence)}>
-                            {(field.confidence * 100).toFixed(0)}% confidence
-                          </Badge>
+                          {field.confidence !== undefined && field.confidence !== null && (
+                            <Badge bg={getConfidenceColor(field.confidence)}>
+                              {(field.confidence * 100).toFixed(0)}% confidence
+                            </Badge>
+                          )}
                         </div>
                       </div>
                       <div className="d-flex gap-2">

@@ -1,5 +1,6 @@
-import { Card, ProgressBar, Alert } from 'react-bootstrap';
+import { Card, ProgressBar, Alert, Spinner } from 'react-bootstrap';
 import { AnalysisStatus, AnalysisProgress as AnalysisProgressType } from '../types';
+import { useEffect, useState } from 'react';
 
 interface AnalysisProgressProps {
   progress: AnalysisProgressType;
@@ -55,21 +56,49 @@ const AnalysisProgressComponent: React.FC<AnalysisProgressProps> = ({
   progress,
   fileName,
 }) => {
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  
   const icon = getStatusIcon(progress.status);
   const color = getStatusColor(progress.status);
   const statusText = getStatusText(progress.status);
+
+  // Track elapsed time during processing
+  useEffect(() => {
+    if (progress.status === AnalysisStatus.PROCESSING) {
+      setElapsedSeconds(0);
+      const interval = setInterval(() => {
+        setElapsedSeconds(prev => prev + 1);
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [progress.status]);
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
+  };
 
   return (
     <Card className="shadow-sm">
       <Card.Body>
         <div className="text-center mb-4">
           <div style={{ fontSize: '4rem' }} className="mb-3">
-            {icon}
+            {progress.status === AnalysisStatus.PROCESSING ? (
+              <Spinner animation="border" variant="primary" />
+            ) : (
+              icon
+            )}
           </div>
           <h4 className="mb-2">{statusText}</h4>
           {fileName && (
             <p className="text-muted mb-0">
               <small>{fileName}</small>
+            </p>
+          )}
+          {progress.status === AnalysisStatus.PROCESSING && (
+            <p className="text-muted mb-0 mt-2">
+              <small>Elapsed: {formatTime(elapsedSeconds)}</small>
             </p>
           )}
         </div>
@@ -83,6 +112,7 @@ const AnalysisProgressComponent: React.FC<AnalysisProgressProps> = ({
               style={{ height: '30px', fontSize: '1rem' }}
               className="mb-3"
               animated
+              striped
             />
             {progress.currentStep && (
               <Alert variant="info" className="mb-0">
@@ -96,6 +126,11 @@ const AnalysisProgressComponent: React.FC<AnalysisProgressProps> = ({
                 <small>{progress.message}</small>
               </p>
             )}
+            <div className="text-center mt-3">
+              <small className="text-muted">
+                ⏱️ Analyzing multiple forms may take a few minutes...
+              </small>
+            </div>
           </div>
         )}
 
