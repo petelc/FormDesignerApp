@@ -6,6 +6,10 @@ export enum CodeTemplate {
   REACT_NATIVE = 'REACT_NATIVE',
   VUE = 'VUE',
   ANGULAR = 'ANGULAR',
+  CSHARP_ASPNET = 'CSHARP_ASPNET',
+  CSHARP_RAZOR = 'CSHARP_RAZOR',
+  CSHARP_BLAZOR = 'CSHARP_BLAZOR',
+  SQL_SCRIPTS = 'SQL_SCRIPTS',
 }
 
 export enum BackendFramework {
@@ -69,4 +73,26 @@ export interface CodeGenerationResult {
   downloadUrl?: string;
   errorMessage?: string;
   progress?: number;
+}
+
+export interface GeneratedCodeFile {
+  fileName: string;
+  filePath: string;
+  content: string;
+  language: string;
+}
+
+export interface ProjectCodeGenerationResponse {
+  projectId: string;
+  projectName: string;
+  formsGenerated: number;
+  files: {
+    backend: GeneratedCodeFile[];
+    frontend: GeneratedCodeFile[];
+    sql: GeneratedCodeFile[];
+    tests: GeneratedCodeFile[];
+    docs: GeneratedCodeFile[];
+  };
+  downloadUrls: string[];
+  message: string;
 }

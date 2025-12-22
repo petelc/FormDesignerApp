@@ -5,6 +5,7 @@ import {
   CreateProjectRequest,
   UpdateProjectRequest,
   ProjectFilters,
+  ProjectStatus,
 } from '../types';
 import { PaginationParams, PaginatedResponse } from '@/shared/types';
 import { handleApiError } from '@/shared/utils/errorHandler';
@@ -119,9 +120,12 @@ export const deleteProject = createAsyncThunk(
 
 export const uploadPdf = createAsyncThunk(
   'projects/uploadPdf',
-  async ({ projectId, file }: { projectId: string; file: File }, { rejectWithValue }) => {
+  async (
+    { projectId, file, onProgress }: { projectId: string; file: File; onProgress?: (progress: number) => void },
+    { rejectWithValue }
+  ) => {
     try {
-      const project = await projectsAPI.uploadPdf(projectId, file);
+      const project = await projectsAPI.uploadPdf(projectId, file, onProgress);
       return project;
     } catch (error) {
       return rejectWithValue(handleApiError(error));
@@ -148,6 +152,11 @@ const projectsSlice = createSlice({
     },
     setUploadProgress: (state, action: PayloadAction<number>) => {
       state.uploadProgress = action.payload;
+    },
+    updateCurrentProjectStatus: (state, action: PayloadAction<ProjectStatus>) => {
+      if (state.currentProject) {
+        state.currentProject.status = action.payload;
+      }
     },
   },
   extraReducers: (builder) => {
@@ -250,6 +259,7 @@ export const {
   setFilters,
   clearCurrentProject,
   setUploadProgress,
+  updateCurrentProjectStatus,
 } = projectsSlice.actions;
 
 export default projectsSlice.reducer;
